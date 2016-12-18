@@ -21,57 +21,94 @@
     </ul>
     <form class="add-items">
       <input type="text" name="item" placeholder="Item Name" required>
-      <input type="submit" value="+ Add Item">
+      <input type="submit" value="+ Add Item"> <br />
+      <input type="button" value="Delete All" class="delete-all">
+      <input type="button" value="Toggle All" class="toggle-all"><br />
+      <input type="button" value="Check All" class="check-all">
+      <input type="button" value="Uncheck All" class="uncheck-all">
     </form>
   </div>
 
 <script>
   const addItems = document.querySelector('.add-items');
   const itemsList = document.querySelector('.plates');
+  const deleteAll = document.querySelector('.delete-all');
+  const toggleAll = document.querySelector('.toggle-all');
+  const checkAll = document.querySelector('.check-all');
+  const uncheckAll = document.querySelector('.uncheck-all');
   const items = JSON.parse(localStorage.getItem('items')) || [];
-
-  function addItem(e) {
-    e.preventDefault();
-    const text = (this.querySelector('[name=item]')).value;
+  let checked = false;
+  function addItem(event) {
+    event.preventDefault();
+    const text = (this.querySelector('[name="item"]')).value;
     const item = {
       text,
-      done: false
-    };
-
+      done: false,
+    }
     items.push(item);
     populateList(items, itemsList);
     localStorage.setItem('items', JSON.stringify(items));
     this.reset();
   }
-
   function populateList(plates = [], platesList) {
-    platesList.innerHTML = plates.map((plate, i) => {
+    platesList.innerHTML = plates.map((plate, index) => {
       return `
         <li>
-          <input type="checkbox" data-index=${i} id="item${i}" ${plate.done ? 'checked' : ''} />
-          <label for="item${i}">${plate.text}</label>
+          <input type="checkbox" data-index=${index} id="item${index}" ${plate.done ? 'checked' : ''} />
+          <label for="item${index}">${plate.text}</label>
         </li>
       `;
     }).join('');
   }
 
-  function toggleDone(e) {
-    if (!e.target.matches('input')) return; // skip this unless it's an input
-    const el = e.target;
+  function toggleDone(event) {
+    if (!event.target.matches('input')) return;
+    const el = event.target;
     const index = el.dataset.index;
     items[index].done = !items[index].done;
     localStorage.setItem('items', JSON.stringify(items));
     populateList(items, itemsList);
   }
 
+  function deleteAllItems() {
+    items.length = 0;
+    localStorage.removeItem('items');
+    populateList(items, itemsList);
+  }
+  function toggleAllItems() {
+    checked = !checked;
+    items.map((item) => {
+      item.done = checked
+    });
+    localStorage.setItem('items', JSON.stringify(items));
+    populateList(items, itemsList);
+  }
+
+  function checkAllItems() {
+    items.map((item) => {
+      item.done = true
+    });
+    localStorage.setItem('items', JSON.stringify(items));
+    populateList(items, itemsList);
+  }
+
+  function uncheckAllItems() {
+    items.map((item) => {
+      item.done = false
+    });
+    localStorage.setItem('items', JSON.stringify(items));
+    populateList(items, itemsList);
+  }
+
   addItems.addEventListener('submit', addItem);
   itemsList.addEventListener('click', toggleDone);
-
+  deleteAll.addEventListener('click', deleteAllItems);
+  toggleAll.addEventListener('click', toggleAllItems);
+  checkAll.addEventListener('click', checkAllItems);
+  uncheckAll.addEventListener('click', uncheckAllItems);
   populateList(items, itemsList);
-
 </script>
 
 
 </body>
 </html>
-
