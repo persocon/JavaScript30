@@ -194,7 +194,6 @@ const seconds = timeNodes
   const [mins, secs] = timeCode.split(':').map(parseFloat);
   const vidSeconds = (mins * 60) + secs;
   total = isNaN(total) ? 0 : total;
-  console.log(vidSeconds, total);
   return total + vidSeconds;
 });
 
