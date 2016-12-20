@@ -190,10 +190,14 @@ const seconds = timeNodes
 //   return (mins * 60) + secs;
 // })
 .reduce((total, node) =>  {
+  if (isNaN(total)) {
+    const [tMins, tSecs] = total.dataset.time.split(':').map(parseFloat);
+    total = (tMins * 60) + tSecs;
+  }
+  // console.log(total, node);
   const timeCode = node.dataset.time;
   const [mins, secs] = timeCode.split(':').map(parseFloat);
   const vidSeconds = (mins * 60) + secs;
-  total = isNaN(total) ? 0 : total;
   return total + vidSeconds;
 });
 
